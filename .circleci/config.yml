@@ -87,25 +87,46 @@ jobs:
           name: Back-end audit
           command: |
             cd backend
-            npm install oauth-sign@^0.9.0
-            npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
+            # npm install oauth-sign@^0.9.0
+            # npm audit fix --audit-level=critical --force
+            # npm audit --audit-level=critical
       - slack/notify:
-          event: always
+          event: fail
           channel: circleci
           template: basic_fail_1
 
-  notify-failure:
+  deploy-infrastructure:
     docker:
-      - image: 'cimg/base:stable'
+      - image: amazon/aws-cli
     steps:
-      - run: 
-          name: slack notification
-          command: return 1
-      - slack/notify:
-          channel: circleci
-          event: fail
-          template: basic_fail_1
+      - checkout
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            # Your code here
+            exit 1
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+      # Here's where you will add some code to rollback on failure      
+
 
 workflows:
   default:
@@ -121,5 +142,5 @@ workflows:
           context: slack-context
       - scan-frontend:
           requires: [build-frontend]
-      - notify-failure:
-          context: slack-context
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]

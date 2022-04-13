@@ -236,7 +236,7 @@ jobs:
           backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
           frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
-deploy-backend:
+  deploy-backend:
     docker:
         - image: python:3.7-alpine3.11
     steps:

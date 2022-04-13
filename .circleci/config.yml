@@ -194,6 +194,10 @@ jobs:
               npm run migrations > migrations_dump.txt
               cat migrations_dump.txt
       - run:
+          name: update certificates
+          command: | 
+            sudo apt-get update && sudo apt-get install -y ca-certificates
+      - run:
           name: Send migration status to kvdb.io OR memstash.io
           command: |   
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
@@ -258,7 +262,7 @@ deploy-backend:
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            # ansible-playbook -i inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
 
 workflows:
@@ -281,3 +285,7 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]

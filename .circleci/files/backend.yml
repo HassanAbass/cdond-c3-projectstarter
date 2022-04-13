@@ -29,7 +29,7 @@ Resources:
       SecurityGroups:
         - Ref: InstanceSecurityGroup
       KeyName: ec2-udemy-key
-      ImageId: ami-04505e74c0741db8d12345
+      ImageId: ami-04505e74c0741db8d
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}

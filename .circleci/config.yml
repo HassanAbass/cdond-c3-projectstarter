@@ -152,7 +152,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - .circleci/ansible/inventory.txt
+            - /root/project/.circleci/ansible/inventory.txt
       - destroy-environment:
           backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
           frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"

@@ -92,15 +92,19 @@ jobs:
             npm audit --audit-level=critical
       - slack/notify:
           event: always
+          channel: circleci
           template: basic_fail_1
 
   notify-failure:
     docker:
       - image: 'cimg/base:stable'
     steps:
+      - run: 
+          name: slack notification
+          command: return 1
       - slack/notify:
-          channel: HassanAbas
-          event: always
+          channel: circleci
+          event: fail
           template: basic_fail_1
 
 workflows:

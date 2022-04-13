@@ -113,4 +113,5 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-      - notify-failure
+      - notify-failure:
+          context: slack-context

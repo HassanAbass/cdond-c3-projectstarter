@@ -6,6 +6,26 @@ orbs:
 defaults: &nodeMachine
     docker:
         - image: circleci/node:13.8.0
+
+commands:
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      backend-name:
+        default: "id"
+        type: string
+      frontend-name:
+        default: "id"
+        type: string
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            aws cloudformation delete-stack --stack-name <<parameters.backend-name>>
+            aws cloudformation delete-stack --stack-name <<parameters.frontend-name>>
+
+
          
 jobs:
   build-frontend:
@@ -120,7 +140,15 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             # Your code here
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=backend-486afc8" \
+              --output text >>  .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
             exit 1
+      - destroy-environment:
+          backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+          frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
       - persist_to_workspace:
           root: ~/
           paths:

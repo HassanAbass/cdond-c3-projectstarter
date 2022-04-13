@@ -99,6 +99,7 @@ jobs:
       - image: 'cimg/base:stable'
     steps:
       - slack/notify:
+          channel: HassanAbas
           event: always
           template: basic_fail_1
 

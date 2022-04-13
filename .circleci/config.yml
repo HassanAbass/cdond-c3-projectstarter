@@ -202,7 +202,7 @@ jobs:
           command: |   
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
               then
-                  curl https://kvdb.io/5HLntYg8hK95NKomGQhPms/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+                  curl https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
               fi
 
   deploy-frontend:
@@ -210,12 +210,12 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             yum install -y tar gzip python ansible node npm
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
@@ -249,7 +249,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip python ansible node npm
+            apk add --update tar gzip python ansible node npm
       - run:
           name: Deploy backend
           command: |

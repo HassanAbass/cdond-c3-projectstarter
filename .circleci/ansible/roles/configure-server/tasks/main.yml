@@ -4,10 +4,10 @@
   apt:
     update_cache: yes
 
-- name: "upgrade packages"
-  become: true
-  apt:
-    upgrade: yes
+# - name: "upgrade packages"
+#   become: true
+#   apt:
+#     upgrade: yes
 
 - name: auto remove dependencies no longer needed
   become: true

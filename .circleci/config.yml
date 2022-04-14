@@ -40,6 +40,8 @@ commands:
             
             if  grep -q "Not Found" res.txt
             then
+              echo "not found"
+            else
               cd ~/project/backend
               npm install
               npm run migrations:revert
@@ -230,14 +232,16 @@ jobs:
           migration_id: migration_${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
-    docker:
-      - image: amazon/aws-cli
+    <<: *nodeMachine
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip python ansible
+            sudo apt-get update && sudo apt-get install -y tar gzip python ansible
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - attach_workspace:
           at: ~/
       - run:

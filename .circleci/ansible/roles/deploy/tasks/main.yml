@@ -1,0 +1,17 @@
+---
+
+
+- name: "un archive backend files."
+  unarchive:
+    src: ~/artifact.tar.gz
+    dest: ~/
+    remote_src: yes
+
+- name: start app
+  become: true
+  shell: |
+    pwd 
+    ls ~
+    cd ~/dist
+    pm2 stop default
+    pm2 start npm -- start  

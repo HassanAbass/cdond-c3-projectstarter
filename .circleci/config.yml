@@ -37,7 +37,7 @@ commands:
           when: on_fail
           command: |
             
-            SUCCESS = $(curl https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/migration_<<parameters.migration_id>>)
+            SUCCESS = $(curl -k https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/migration_<<parameters.migration_id>>)
             if(( $SUCCESS==1 )); 
             then
               cd ~/project/backend
@@ -222,7 +222,7 @@ jobs:
           command: |   
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
               then
-                  curl https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
+                  curl -k https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
               else 
                   exit 1
               fi

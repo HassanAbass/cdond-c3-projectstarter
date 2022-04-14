@@ -1,0 +1,11 @@
+global:
+  resolve_timeout: 1m
+  slack_api_url: https://hooks.slack.com/services/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
+route:
+  receiver: "slack-notifications"
+receivers:
+  - name: "slack-notifications"
+    slack_configs:
+      - channel: "HassanAbas"
+        text: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
+        send_resolved: true

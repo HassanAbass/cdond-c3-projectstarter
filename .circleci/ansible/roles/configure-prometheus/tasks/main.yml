@@ -1,0 +1,96 @@
+- name: "setup prometheus config dirctory."
+  become: true
+  shell: |
+    useradd --no-create-home prometheus
+    mkdir /etc/prometheus
+    mkdir /var/lib/prometheus
+
+- name: "install prometheus server."
+  unarchive:
+    src: https://github.com/prometheus/prometheus/releases/download/v2.19.0/prometheus-2.19.0.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: "recursivly copy config files."
+  become: true
+  shell: |
+    cp /tmp/prometheus-2.19.0.linux-amd64/prometheus /usr/local/bin
+    cp /tmp/prometheus-2.19.0.linux-amd64/promtool /usr/local/bin/
+    cp -r /tmp/prometheus-2.19.0.linux-amd64/consoles /etc/prometheus
+    cp -r /tmp/prometheus-2.19.0.linux-amd64/console_libraries /etc/prometheus
+    cp /tmp/prometheus-2.19.0.linux-amd64/promtool /usr/local/bin/
+
+- name: "add prometheus config file."
+  become: true
+  copy:
+    src: prometheus.yml
+    dest: /etc/prometheus/
+
+- name: "add prometheus rules config file."
+  become: true
+  copy:
+    src: prometheus_rules.yml
+    dest: /etc/prometheus/
+
+- name: "add prometheus service file."
+  become: true
+  copy:
+    src: prometheus.service
+    dest: /etc/systemd/system/
+
+- name: "assign promethues config/bin files user, groups."
+  become: true
+  shell: | 
+    chown prometheus:prometheus /etc/prometheus
+    chown prometheus:prometheus /usr/local/bin/prometheus
+    chown prometheus:prometheus /usr/local/bin/promtool
+    chown -R prometheus:prometheus /etc/prometheus/consoles
+    chown -R prometheus:prometheus /etc/prometheus/console_libraries
+    chown -R prometheus:prometheus /var/lib/prometheus
+
+- name: "enable/restart prometheus service"
+  become: true
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: prometheus
+    enabled: yes
+
+- name: "install prometheus alert manager."
+  unarchive:
+    src: https://github.com/prometheus/alertmanager/releases/download/v0.21.0/alertmanager-0.21.0.linux-amd64.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: "recursivly copy alertmanager config files."
+  become: true
+  shell: |
+    cp /tmp/alertmanager-0.21.0.linux-amd64/alertmanager /usr/local/bin
+    cp /tmp/alertmanager-0.21.0.linux-amd64/amtool /usr/local/bin/
+    mkdir /var/lib/alertmanager
+
+- name: "add alertmanager config file."
+  become: true
+  copy:
+    src: alertmanager.yml
+    dest: /etc/prometheus/
+
+- name: "add alertmanager service file."
+  become: true
+  copy:
+    src: alertmanager.service
+    dest: /etc/systemd/system/
+
+- name: "enable/restart alertmanager service"
+  become: true
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: alertmanager
+    enabled: yes
+
+- name: "cleanup files."
+  become: true
+  shell:
+    cmd: rm -rf prometheus-2.19.0.linux-amd64.tar.gz /tmp/prometheus-2.19.0.linux-amd64 /tmp/alertmanager*
+

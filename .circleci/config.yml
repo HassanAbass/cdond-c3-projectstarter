@@ -204,6 +204,9 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i ~/inventory.txt configure-server.yml
             ansible-playbook -i ~/inventory.txt configure-prometheus-node.yml
+      - destroy-environment:
+          backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+          frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
             
 
   run-migrations:
@@ -233,8 +236,8 @@ jobs:
               else 
                   exit 1
               fi
-      # - revert-migrations:
-      #     migration_id: migration_${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          migration_id: migration_${CIRCLE_WORKFLOW_ID:0:7}
 
   deploy-frontend:
     <<: *nodeMachine
@@ -265,6 +268,8 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - revert-migrations:
+          migration_id: migration_${CIRCLE_WORKFLOW_ID:0:7}
       - destroy-environment:
           backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
           frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"

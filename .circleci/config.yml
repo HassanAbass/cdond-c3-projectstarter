@@ -387,8 +387,9 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       - run:
-          name: Remove old stacks and files
+          name: Fetch OldStack workflow ID && Remove old stacks and files.
           command: |
+            # Fetch old workflow from memory.
             curl -k https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/uda-people-last_workflow > res.txt
             
             if  grep -q "Not Found" res.txt
@@ -402,11 +403,6 @@ jobs:
               #delete workflow key.
               curl -k https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/uda-people-last_workflow -XDELETE
             fi
-      - revert-migrations:
-          migration_id: migration_${CIRCLE_WORKFLOW_ID:0:7}
-      - destroy-environment:
-          backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-          frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:

@@ -130,9 +130,10 @@ jobs:
           name: Back-end audit
           command: |
             cd backend
-            # npm install oauth-sign@^0.9.0
-            # npm audit fix --audit-level=critical --force
-            # npm audit --audit-level=critical
+            npm install oauth-sign@^0.9.0
+            npm audit fix --audit-level=critical --force
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
       - slack/notify:
           event: fail
           channel: circleci
@@ -188,7 +189,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: 
-            - 98:01:84:fd:5b:e9:72:0a:85:c1:06:d9:35:20:cb:bc
+            - a8:bd:1f:e4:ab:ee:29:35:b1:70:af:74:9b:c2:04:9d
       - attach_workspace:
           at: ~/
       - run:
@@ -271,7 +272,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: 
-            - 98:01:84:fd:5b:e9:72:0a:85:c1:06:d9:35:20:cb:bc
+            - a8:bd:1f:e4:ab:ee:29:35:b1:70:af:74:9b:c2:04:9d
       - attach_workspace:
           at: ~/
       - run:

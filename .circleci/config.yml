@@ -280,6 +280,9 @@ jobs:
           command: |
             sudo apt update && sudo apt install ansible
             sudo apt-get update && sudo apt-get install -y tar gzip
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Deploy backend
           command: |
@@ -306,6 +309,9 @@ jobs:
           name: update certificates for curl
           command: | 
             sudo apt-get update && sudo apt-get install -y ca-certificates
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
           name: Get backend url
           command: |
@@ -332,7 +338,9 @@ jobs:
             else
               return 1
             fi
-      # Here's where you will add some code to rollback on failure  
+      - destroy-environment:
+          backend-name: "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+          frontend-name: "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
 
 workflows:
   default:

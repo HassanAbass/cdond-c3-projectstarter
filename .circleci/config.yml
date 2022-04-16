@@ -37,7 +37,7 @@ commands:
           name: Revert migrations
           when: on_fail
           command: |
-            curl -k https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/migration_<<parameters.migration_id>> > res.txt
+            curl -k https://kvdb.io/Mjins2pywh7XyGqhFKxNLM/<<parameters.migration_id>> > res.txt
             
             if  grep -q "Not Found" res.txt
             then
